@@ -7,5 +7,6 @@ namespace BusBookingSystem.Repositories.BusesRepository
     public interface IBus_Repository
     {
         public BaseResponse GetScheduleData(ReservationRequest user, string numberOfPassangers);
+        public BaseResponse CreateSchedule(CreateReservation request);
     }
 }

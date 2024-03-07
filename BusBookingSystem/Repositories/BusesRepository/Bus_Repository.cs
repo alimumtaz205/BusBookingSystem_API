@@ -78,5 +78,43 @@ namespace BusBookingSystem.Repositories.BusesRepository
             return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = ListData };
         }
 
+        public BaseResponse CreateSchedule(CreateReservation request)
+        {
+            DataTable dt = new DataTable();
+            SqlConnection con = null;
+            try
+            {
+                con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
+
+                using (SqlCommand cmd = new SqlCommand("[sp_CreateBusSchedule]", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                    cmd.Parameters.AddWithValue("@BusID", request.busID);
+                    cmd.Parameters.AddWithValue("@RouteID", request.routeID);
+                    cmd.Parameters.AddWithValue("@DepartureTime", request.departureTime);
+                    cmd.Parameters.AddWithValue("@ArrivalTime", request.departureTime);
+                    cmd.Parameters.AddWithValue("@AvailableSeats", request.availableSeats);
+
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    isSuccess = true;
+                    Message = "Inserted Successfully";
+                    con.Close();
+                    //tranCode = TranCodes.Success;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = "" };
+        }
+
     }
 }

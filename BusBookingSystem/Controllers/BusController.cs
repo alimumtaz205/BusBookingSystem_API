@@ -40,13 +40,13 @@ namespace BusBookingSystem.Controllers
 
         [HttpPost]
         [Route("CreateSchedule")]
-        public async Task<IActionResult> CreateSchedule([FromBody] ReservationRequest request)
+        public async Task<IActionResult> CreateSchedule([FromBody] CreateReservation request)
         {
             string numberOfPassangers = string.Empty;
             BaseResponse response = new BaseResponse();
             try
             {
-                //response = _busRepository.CreateSchedule(request, numberOfPassangers);
+                response = _busRepository.CreateSchedule(request);
             }
             catch (Exception ex)
             {
