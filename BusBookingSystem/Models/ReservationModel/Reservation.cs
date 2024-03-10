@@ -13,7 +13,7 @@
         public string? CreatedBy { get; set; }
         public int Deleted { get; set; }
         public int No_of_seats { get; set; }
-        public int Seat_No { get; set; }
+        public string? Seat_No { get; set; }
         public string? Additional_luggage { get; set; }
         public string? Additional_luggage_details { get; set; }
     }

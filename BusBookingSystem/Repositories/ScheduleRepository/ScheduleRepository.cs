@@ -3,6 +3,7 @@ using BusBookingSystem.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using BusBookingSystem.Models.RouteModel;
 
 namespace BusBookingSystem.Repositories.ScheduleRepository
 {
@@ -17,7 +18,6 @@ namespace BusBookingSystem.Repositories.ScheduleRepository
         {
             _configuration = configuration;
         }
-
 
         public BaseResponse GetScheduleData(ReservationRequest request, string numberOfPassangers)
         {
@@ -114,7 +114,43 @@ namespace BusBookingSystem.Repositories.ScheduleRepository
             }
             return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = "" };
         }
+        public BaseResponse GetFare(FareModel request)
+        {
+            SqlConnection con = null;
+            FareOut fareOut = new FareOut();
+            try
+            {
+                con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
 
+                using (SqlCommand cmd = new SqlCommand("[sp_CalculateTicketFare]", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                    cmd.Parameters.AddWithValue("@RouteID", request.RouteID);
+                    cmd.Parameters.AddWithValue("@BusID", request.BusID);
+
+                    cmd.Parameters.Add("@Fare", SqlDbType.Decimal).Direction = ParameterDirection.Output;
+                    cmd.ExecuteNonQuery();
+
+                    // Retrieve output parameters
+                    fareOut.Fare = (decimal)cmd.Parameters["@Fare"].Value;
+
+                    isSuccess = true;
+                    con.Close();
+                    //tranCode = TranCodes.Success;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = fareOut };
+        }
 
     }
 }

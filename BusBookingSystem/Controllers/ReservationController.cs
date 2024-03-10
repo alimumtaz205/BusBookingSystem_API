@@ -37,6 +37,23 @@ namespace BusBookingSystem.Controllers
             return Ok(response);
         }
 
+        [HttpPost]
+        [Route("GetReservation")]
+        public async Task<IActionResult> GetReservation([FromBody] Reservation_ID request)
+        {
+            BaseResponse response = new BaseResponse();
+            try
+            {
+                response = _reservationRepository.GetReservation(request);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message.ToString();
+            }
+
+            return Ok(response);
+        }
+
         [HttpPut]
         [Route("CancelReservation")]
         public async Task<IActionResult> CancelReservation([FromBody] Reservation_ID request)
@@ -53,6 +70,7 @@ namespace BusBookingSystem.Controllers
 
             return Ok(response);
         }
+
 
         [HttpPut]
         [Route("UpdateReservation")]
