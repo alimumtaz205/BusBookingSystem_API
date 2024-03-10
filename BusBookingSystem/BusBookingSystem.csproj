@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\ScheduleRepository\" />
     <Folder Include="Repositories\RouteRepository\" />
-    <Folder Include="Repositories\ReservationRepository\" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,8 @@ using BusBookingSystem.Models.UserModel;
 using System.Data.SqlClient;
 using System.Data;
 using BusBookingSystem.Models.DTOs;
+using BusBookingSystem.Models.BusModel;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace BusBookingSystem.Repositories.BusesRepository
 {
@@ -19,50 +21,28 @@ namespace BusBookingSystem.Repositories.BusesRepository
             _configuration = configuration;
         }
 
-        public BaseResponse GetScheduleData(ReservationRequest request,string numberOfPassangers)
+        public BaseResponse AddBus(BusDTO request)
         {
             DataTable dt = new DataTable();
             SqlConnection con = null;
-
-            List<BusSchedule_DTO> ListData = new List<BusSchedule_DTO>();
             try
             {
                 con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
 
-                using (SqlCommand cmd = new SqlCommand("[sp_SearchBusSchedule]", con))
+                using (SqlCommand cmd = new SqlCommand("sp_AddBus", con))
                 {
                     con.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     // Parameters
-                    cmd.Parameters.AddWithValue("@departureCity", request.departureCity);
-                    cmd.Parameters.AddWithValue("@arrivalCity", request.arrivalCity);
-                    cmd.Parameters.AddWithValue("@departureTime", request.departureTime);
-                    cmd.Parameters.AddWithValue("@numberOfPassangers", numberOfPassangers);
+                   cmd.Parameters.AddWithValue("@Bus_Name", request.BusName);
+                   cmd.Parameters.AddWithValue("@Capacity", request.Capacity);
+                   cmd.Parameters.AddWithValue("@BusNo", request.BusNo);
+                   cmd.Parameters.AddWithValue("@BusType ", request.BusType);
 
-                    SqlDataAdapter myDA = new SqlDataAdapter(cmd);
-                    myDA.Fill(dt);
-                    
-                     if (dt != null && dt.Rows.Count > 0)
-                        {
-                            foreach (DataRow dr in dt.Rows)
-                            {
-                                BusSchedule_DTO obj = new BusSchedule_DTO();
-
-                                obj.BusID = Convert.ToInt32(dr["BusID"]);
-                                obj.RouteID = Convert.ToInt32(dr["RouteID"]);
-                                obj.Bus_Name = Convert.ToString(dr["Bus_Name"]);
-                                obj.Capacity = Convert.ToString(dr["Capacity"]);
-                                obj.DepartureCity = Convert.ToString(dr["DepartureCity"]);
-                                obj.ArrivalCity = Convert.ToString(dr["ArrivalCity"]);
-                                obj.EstimatedDuration = Convert.ToInt32(dr["EstimatedDuration"]);
-                                obj.DeparterDate = Convert.ToDateTime(dr["DeparterDate"]);
-                                obj.DepartureTime = Convert.ToDateTime(dr["DepartureTime"]);
-                                obj.ArrivalTime = Convert.ToDateTime(dr["ArrivalTime"]);
-                                ListData.Add(obj);
-                            }
-                        }
-                     isSuccess = true;
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    isSuccess = true;
+                    Message = "Inserted Successfully";
                     con.Close();
                     //tranCode = TranCodes.Success;
                 }
@@ -75,36 +55,178 @@ namespace BusBookingSystem.Repositories.BusesRepository
                     con.Close();
                 }
             }
-            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = ListData };
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = request };
         }
 
-        public BaseResponse CreateSchedule(CreateReservation request)
+        public BaseResponse GetBusesData()
         {
             DataTable dt = new DataTable();
             SqlConnection con = null;
+
+            List<Bus> ListData = new List<Bus>();
             try
             {
                 con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
 
-                using (SqlCommand cmd = new SqlCommand("[sp_CreateBusSchedule]", con))
+                using (SqlCommand cmd = new SqlCommand("sp_GetBusData", con))
                 {
                     con.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     // Parameters
-                    cmd.Parameters.AddWithValue("@BusID", request.busID);
-                    cmd.Parameters.AddWithValue("@RouteID", request.routeID);
-                    cmd.Parameters.AddWithValue("@DepartureTime", request.departureTime);
-                    cmd.Parameters.AddWithValue("@ArrivalTime", request.departureTime);
-                    cmd.Parameters.AddWithValue("@AvailableSeats", request.availableSeats);
+                    cmd.Parameters.AddWithValue("@busID", "0");
 
-                    SqlDataReader dr = cmd.ExecuteReader();
+                    SqlDataAdapter myDA = new SqlDataAdapter(cmd);
+                    myDA.Fill(dt);
+
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            Bus obj = new Bus();
+
+                            obj.BusID = Convert.ToInt32(dr["BusID"]);
+                            obj.BusName = Convert.ToString(dr["Bus_Name"]);
+                            obj.BusNo = Convert.ToString(dr["BusNo"]);
+                            obj.Capacity = Convert.ToInt32(dr["Capacity"]);
+                            obj.BusType = Convert.ToString(dr["BusType"]);
+                            ListData.Add(obj);
+                        }
+                    }
                     isSuccess = true;
-                    Message = "Inserted Successfully";
                     con.Close();
                     //tranCode = TranCodes.Success;
                 }
+            }
+            catch (Exception ex)
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = ListData };
+        }
 
+        public BaseResponse GetBuseByID(BusID BusID)
+        {
+            DataTable dt = new DataTable();
+            SqlConnection con = null;
+
+            List<Bus> ListData = new List<Bus>();
+            try
+            {
+                con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
+
+                using (SqlCommand cmd = new SqlCommand("sp_GetBusData", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                    cmd.Parameters.AddWithValue("@busID", BusID.Bus_ID);
+
+                    SqlDataAdapter myDA = new SqlDataAdapter(cmd);
+                    myDA.Fill(dt);
+
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            Bus obj = new Bus();
+
+                            obj.BusID = Convert.ToInt32(dr["BusID"]);
+                            obj.BusName = Convert.ToString(dr["Bus_Name"]);
+                            obj.BusNo = Convert.ToString(dr["BusNo"]);
+                            obj.Capacity = Convert.ToInt32(dr["Capacity"]);
+                            obj.BusType = Convert.ToString(dr["BusType"]);
+                            ListData.Add(obj);
+                        }
+                    }
+                    isSuccess = true;
+                    con.Close();
+                    //tranCode = TranCodes.Success;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = ListData };
+        }
+
+        public BaseResponse DeleteBus(BusID BusID)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
+
+                using (SqlCommand cmd = new SqlCommand("sp_DeleteBus", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                    cmd.Parameters.AddWithValue("@busID", BusID.Bus_ID);
+
+                    SqlParameter messageParameter = cmd.Parameters.Add("@message", SqlDbType.NVarChar, 255);
+                    messageParameter.Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+
+                    // Retrieve the output message
+                    Message = messageParameter.Value.ToString();
+
+                    isSuccess = true;
+                    con.Close();
+                    //tranCode = TranCodes.Success;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return new BaseResponse { resCode = resCode, IsSuccess = isSuccess, Message = Message, Data = "" };
+        }
+
+        public BaseResponse UpdateBus(Bus request)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = new SqlConnection(_configuration.GetConnectionString("CONN_STR"));
+
+                using (SqlCommand cmd = new SqlCommand("sp_UpdateBus", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                   cmd.Parameters.AddWithValue("@busID", request.BusID);
+                   cmd.Parameters.AddWithValue("@newBusName", request.BusName);
+                   cmd.Parameters.AddWithValue("@newBusCapacity", request.Capacity);
+	               cmd.Parameters.AddWithValue("@newBusNo", request.BusNo);
+                   cmd.Parameters.AddWithValue("@newBusType", request.BusType);
+
+                    SqlParameter messageParameter = cmd.Parameters.Add("@message", SqlDbType.NVarChar, 255);
+                    messageParameter.Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+
+                    // Retrieve the output message
+                    Message = messageParameter.Value.ToString();
+
+                    isSuccess = true;
+                    con.Close();
+                    //tranCode = TranCodes.Success;
+                }
             }
             catch (Exception ex)
             {
