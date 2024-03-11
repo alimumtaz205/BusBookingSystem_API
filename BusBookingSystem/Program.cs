@@ -2,6 +2,7 @@ using BusBookingSystem.Repositories;
 using BusBookingSystem.Repositories.BusesRepository;
 using BusBookingSystem.Repositories.ReservationRepository;
 using BusBookingSystem.Repositories.ScheduleRepository;
+using BusBookingSystem.Repositories.UserManagementRepository;
 using BusBookingSystem.Repositories.UserRepository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddSingleton<IBus_Repository, Bus_Repository>();
 builder.Services.AddSingleton<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddSingleton<IReservationRepository, ReservationRepository>();
 builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
+builder.Services.AddSingleton<IUserMgtRepository, UserMgtRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

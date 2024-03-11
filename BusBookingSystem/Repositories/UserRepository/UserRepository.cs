@@ -24,10 +24,7 @@ namespace BusBookingSystem.Repositories.UserRepository
         public BaseResponse CreateUser(UserDTO user)
         {
             string userName = "system";
-            Algorithms obj_Algorithms = new Algorithms();
-            Credentials credentials = new Credentials();
-            
-            credentials = obj_Algorithms.GenerateSaltedHash(user.Password);
+            int Code = 0;
 
             try
             {
@@ -54,7 +51,10 @@ namespace BusBookingSystem.Repositories.UserRepository
                     try
                     {
                         cmd.ExecuteNonQuery();
-                        int Code = Convert.ToInt32(cmd.Parameters["@ResultCode"].Value);
+                        if (!string.IsNullOrEmpty(cmd.Parameters["@ResultCode"].Value.ToString()))
+                        {
+                            Code = Convert.ToInt32(cmd.Parameters["@ResultCode"].Value);
+                        }
                         Message = Convert.ToString(cmd.Parameters["@ResultMessage"].Value);
                         if(Code==1)
                         {
