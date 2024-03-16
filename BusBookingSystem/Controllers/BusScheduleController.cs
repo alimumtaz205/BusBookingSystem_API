@@ -56,6 +56,43 @@ namespace BusBookingSystem.Controllers
             return Ok(response);
         }
 
+        [HttpPut]
+        [Route("UpdateSchedule")]
+        public async Task<IActionResult> UpdateSchedule([FromBody] UpdateReservation request)
+        {
+            string numberOfPassangers = string.Empty;
+            BaseResponse response = new BaseResponse();
+            try
+            {
+                response = _scheduleRepository.UpdateSchedule(request);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message.ToString();
+            }
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteSchedule")]
+        public async Task<IActionResult> DeleteSchedule([FromBody] DeleteReservation request)
+        {
+            string numberOfPassangers = string.Empty;
+            BaseResponse response = new BaseResponse();
+            try
+            {
+                response = _scheduleRepository.DeleteSchedule(request);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message.ToString();
+            }
+
+            return Ok(response);
+        }
+
+
         [HttpPost]
         [Route("GetFare")]
         public async Task<IActionResult> GetFare([FromBody] FareModel request)

@@ -1,6 +1,7 @@
 using BusBookingSystem.Repositories;
 using BusBookingSystem.Repositories.BusesRepository;
 using BusBookingSystem.Repositories.ReservationRepository;
+using BusBookingSystem.Repositories.RouteRepository;
 using BusBookingSystem.Repositories.ScheduleRepository;
 using BusBookingSystem.Repositories.UserManagementRepository;
 using BusBookingSystem.Repositories.UserRepository;
@@ -17,6 +18,7 @@ builder.Services.AddSingleton<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddSingleton<IReservationRepository, ReservationRepository>();
 builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
 builder.Services.AddSingleton<IUserMgtRepository, UserMgtRepository>();
+builder.Services.AddSingleton<IRouteRepository, RouteRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

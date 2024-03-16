@@ -10,7 +10,6 @@ namespace BusBookingSystem.Repositories.UserRepository
     public interface IUserRepository
     {
         public BaseResponse CreateUser(UserDTO user);
-
         public BaseResponse GetUsers();
         public BaseResponse GetUserByID(User_ID ID);
         public BaseResponse UpdateUser(User request);

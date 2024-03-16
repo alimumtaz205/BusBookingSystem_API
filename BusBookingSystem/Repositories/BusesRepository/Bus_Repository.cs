@@ -178,7 +178,6 @@ namespace BusBookingSystem.Repositories.BusesRepository
 
                     cmd.ExecuteNonQuery();
 
-                    // Retrieve the output message
                     Message = messageParameter.Value.ToString();
 
                     isSuccess = true;

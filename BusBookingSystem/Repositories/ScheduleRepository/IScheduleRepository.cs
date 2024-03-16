@@ -8,6 +8,8 @@ namespace BusBookingSystem.Repositories.ScheduleRepository
     {
         public BaseResponse GetScheduleData(ReservationRequest request, string numberOfPassangers);
         public BaseResponse CreateSchedule(CreateReservation request);
+        public BaseResponse UpdateSchedule(UpdateReservation request);
+        public BaseResponse DeleteSchedule(DeleteReservation request);
         public BaseResponse GetFare(FareModel request);
     }
 }
