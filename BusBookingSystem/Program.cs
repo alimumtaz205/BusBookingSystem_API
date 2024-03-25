@@ -1,5 +1,6 @@
 using BusBookingSystem.Repositories;
 using BusBookingSystem.Repositories.BusesRepository;
+using BusBookingSystem.Repositories.CityRepository;
 using BusBookingSystem.Repositories.ReservationRepository;
 using BusBookingSystem.Repositories.RouteRepository;
 using BusBookingSystem.Repositories.ScheduleRepository;
@@ -19,8 +20,21 @@ builder.Services.AddSingleton<IReservationRepository, ReservationRepository>();
 builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
 builder.Services.AddSingleton<IUserMgtRepository, UserMgtRepository>();
 builder.Services.AddSingleton<IRouteRepository, RouteRepository>();
+builder.Services.AddSingleton<ICityRepository, CityRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Default Policy
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyHeader()
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -30,6 +44,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
